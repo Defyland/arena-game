@@ -8,6 +8,9 @@ export class AssetLoader {
     // Carregar sprites do guerreiro (warrior)
     this.loadWarriorSprites(scene);
     
+    // Carregar sprites do orc
+    this.loadOrcSprites(scene);
+    
     // Adicionar listener para verificar carregamento
     scene.load.on('complete', () => {
       console.log('Assets carregados com sucesso');
@@ -18,6 +21,8 @@ export class AssetLoader {
         console.log('Background map carregado:', key);
       } else if (key.startsWith('warrior-')) {
         console.log('Warrior sprite carregado:', key);
+      } else if (key.startsWith('Orc-')) {
+        console.log('Orc sprite carregado:', key);
       }
     });
     
@@ -139,6 +144,43 @@ export class AssetLoader {
     });
   }
 
+  private static loadOrcSprites(scene: Phaser.Scene) {
+    // Dimensões dos sprites de orc (verificar dimensões reais)
+    const frameWidth = 96;
+    const frameHeight = 80;
+    
+    // Carregar sprites de orc como spritesheets
+    scene.load.spritesheet('Orc-Idle', '/assets/sprites_orc/IDLE/Orc-Idle.png', {
+      frameWidth: frameWidth,
+      frameHeight: frameHeight
+    });
+    
+    scene.load.spritesheet('Orc-Walk', '/assets/sprites_orc/RUN/Orc-Walk.png', {
+      frameWidth: frameWidth,
+      frameHeight: frameHeight
+    });
+    
+    scene.load.spritesheet('Orc-Attack01', '/assets/sprites_orc/ATTACK 1/Orc-Attack01.png', {
+      frameWidth: frameWidth,
+      frameHeight: frameHeight
+    });
+    
+    scene.load.spritesheet('Orc-Attack02', '/assets/sprites_orc/ATTACK 2/Orc-Attack02.png', {
+      frameWidth: frameWidth,
+      frameHeight: frameHeight
+    });
+    
+    scene.load.spritesheet('Orc-Hurt', '/assets/sprites_orc/HURT/Orc-Hurt.png', {
+      frameWidth: frameWidth,
+      frameHeight: frameHeight
+    });
+    
+    scene.load.spritesheet('Orc-Death', '/assets/sprites_orc/DEATH/Orc-Death.png', {
+      frameWidth: frameWidth,
+      frameHeight: frameHeight
+    });
+  }
+
   static createTiledBackground(scene: Phaser.Scene, width: number, height: number) {
     // Verificar se a textura foi carregada
     if (!scene.textures.exists('background-map')) {
@@ -226,4 +268,4 @@ export class AssetLoader {
       heal: healParticles
     };
   }
-} 
+}

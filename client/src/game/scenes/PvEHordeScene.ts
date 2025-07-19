@@ -3,10 +3,11 @@ import { GAME_CONFIG, COLORS } from '../utils/Constants';
 import { AssetLoader } from '../utils/AssetLoader';
 import { Skill } from '../../types/Game';
 import { WarriorSprite } from '../entities/WarriorSprite';
+import { OrcSprite } from '../entities/OrcSprite';
 
 export default class PvEHordeScene extends Phaser.Scene {
   private player: Player | null = null;
-  private enemies: Phaser.Physics.Arcade.Group | null = null;
+  private enemies: OrcSprite[] = [];
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys | null = null;
   private skillKeys: { [key: string]: Phaser.Input.Keyboard.Key } = {};
 
@@ -49,11 +50,15 @@ export default class PvEHordeScene extends Phaser.Scene {
     // Setup physics world bounds
     this.physics.world.setBounds(0, 0, 2000, 2000);
 
-    // Create enemy group
-    this.enemies = this.physics.add.group();
+    // Initialize enemies array
+    this.enemies = [];
 
-    // Add collision detection
-    this.physics.add.collider(this.player.getPhysicsSprite(), this.enemies);
+    // Add collision detection for each enemy
+    this.enemies.forEach(enemy => {
+      if (this.player) {
+        this.physics.add.collider(this.player.getPhysicsSprite(), enemy.getPhysicsSprite());
+      }
+    });
 
     // Spawn enemies periodically
     this.time.addEvent({
@@ -83,10 +88,50 @@ export default class PvEHordeScene extends Phaser.Scene {
     else if (Phaser.Input.Keyboard.JustDown(this.skillKeys.R)) skillInput = 'R';
 
     this.player.update(movement, skillInput);
+    
+    // Update enemies
+    this.updateEnemies();
+  }
+
+  private updateEnemies() {
+    // Remove dead enemies
+    this.enemies = this.enemies.filter(enemy => enemy.isAlive());
+    
+    // Update alive enemies with simple AI
+    this.enemies.forEach(enemy => {
+      if (enemy.isAlive() && this.player) {
+        const playerSprite = this.player.getPhysicsSprite();
+        const enemySprite = enemy.getPhysicsSprite();
+        
+        // Simple AI: move towards player
+        const dx = playerSprite.x - enemySprite.x;
+        const dy = playerSprite.y - enemySprite.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        if (distance > 50) { // Don't get too close
+          const speed = 100;
+          const movement = {
+            x: (dx / distance) * speed,
+            y: (dy / distance) * speed
+          };
+          
+          enemy.setVelocity(movement.x, movement.y);
+          enemy.update(movement, null);
+        } else {
+          // Attack when close
+          enemy.setVelocity(0, 0);
+          enemy.update({ x: 0, y: 0 }, 'attack1');
+        }
+      }
+    });
+  }
+
+  public getEnemies(): OrcSprite[] {
+    return this.enemies;
   }
 
   private spawnEnemy() {
-    if (!this.enemies || !this.player) return;
+    if (!this.player) return;
 
     // Spawn ao redor do player
     const angle = Phaser.Math.Between(0, 360);
@@ -95,12 +140,12 @@ export default class PvEHordeScene extends Phaser.Scene {
     const spawnX = playerSprite.x + Math.cos(angle) * distance;
     const spawnY = playerSprite.y + Math.sin(angle) * distance;
     
-    const enemy = this.physics.add.sprite(spawnX, spawnY, 'enemy-basic');
-    enemy.setCollideWorldBounds(true);
-    enemy.setDepth(20);
-    enemy.body!.setSize(24, 24);
+    const enemy = new OrcSprite(this, spawnX, spawnY);
     
-    this.enemies.add(enemy);
+    // Add collision detection for this enemy
+    this.physics.add.collider(this.player.getPhysicsSprite(), enemy.getPhysicsSprite());
+    
+    this.enemies.push(enemy);
   }
 }
 
@@ -278,6 +323,28 @@ export class Player {
     
     const attackArea = this.scene.add.circle(hitX, hitY, attackRange, COLORS.PLAYER, 0.3);
     attackArea.setDepth(40);
+    
+    // Check for enemy hits
+    const scene = this.scene as PvEHordeScene;
+    scene.getEnemies().forEach((enemy: OrcSprite) => {
+      if (enemy.isAlive()) {
+        const enemySprite = enemy.getPhysicsSprite();
+        const distance = Phaser.Math.Distance.Between(
+          hitX, hitY, 
+          enemySprite.x, enemySprite.y
+        );
+        
+        if (distance <= attackRange) {
+          enemy.takeDamage(skill.damage || 25);
+          
+          // Check if enemy dies
+          if (!enemy.isAlive()) {
+            enemy.die();
+            this.gainExperience(10);
+          }
+        }
+      }
+    });
     
     this.scene.time.delayedCall(200, () => {
       attackArea.destroy();
