@@ -51,7 +51,7 @@ export class WarriorSprite {
     this.scene = scene;
     this.sprite = scene.physics.add.sprite(x, y, 'warrior-idle-down', 0);
     this.sprite.setDepth(30);
-    this.sprite.setScale(2.5); // Aumentar tamanho visual
+    this.sprite.setScale(3); // Aumentar tamanho visual
     this.sprite.setCollideWorldBounds(true);
     this.sprite.body!.setSize(22, 34); // Manter hitbox original
     
