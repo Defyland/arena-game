@@ -105,6 +105,25 @@ temp/
 game-saves/
 screenshots/
 
-# Server specific (if applicable)
+# Server specific
 uploads/
-temp-uploads/ 
+temp-uploads/
+sessions/
+*.session
+
+# Database files (if using local DB)
+*.db
+*.sqlite
+*.sqlite3
+
+# PM2 process files
+.pm2/
+
+# Nodemon
+nodemon-debug.json
+
+# Socket.io specific
+socket.io.log
+
+# Express specific
+public/uploads/ 
