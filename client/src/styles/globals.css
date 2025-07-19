@@ -1,0 +1,53 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #000;
+  color: white;
+  user-select: none;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Game UI Components */
+@layer components {
+  .game-button {
+    @apply bg-game-primary hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200 cursor-pointer select-none;
+  }
+  
+  .game-button:active {
+    @apply scale-95;
+  }
+  
+  .game-menu {
+    @apply bg-black/80 backdrop-blur-sm border border-gray-700 rounded-lg p-6;
+  }
+  
+  .health-bar {
+    @apply bg-red-600 h-2 rounded-full transition-all duration-300;
+  }
+  
+  .energy-bar {
+    @apply bg-blue-500 h-2 rounded-full transition-all duration-300;
+  }
+  
+  .skill-button {
+    @apply w-12 h-12 bg-gray-800 border-2 border-gray-600 rounded-lg flex items-center justify-center text-white font-bold cursor-pointer hover:border-game-accent transition-colors;
+  }
+  
+  .skill-button.cooldown {
+    @apply bg-gray-900 border-gray-700 text-gray-500 cursor-not-allowed;
+  }
+} 

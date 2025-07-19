@@ -1,0 +1,15 @@
+Primeiro eu quero tirar duvidas sobre o projeto.
+
+- quero criar um jogo 2d que os personagens se movimentem em 3d por um mapa, usando phaser e typescript
+- dois mapas (multiplayer pvp 1x1 em uma arena aberta) e o outro mapa estilo vampire survivor pve contra hordas de monstros
+- infraestrutura precisa ser a mais performatica possivel
+- tem que ter um menu de selecao de personagem com 2 personagens diferentes (ataque a distancia e ataque a curta distancia)
+- o personagem se move com as teclas up, down, left, right do teclado e possui 4 habilidades no q w e r
+- use sprites free por enquanto para o personagem e para os monstros
+- camera centrada no player
+- o personagem tem que ter barra de vida e energia
+- cada habilidade tem que ter um custo de energia
+- cada habilidade tem que ter um cooldown
+- precisa ser possivel usar as habilidades enquanto o personagem esta se movendo
+- precisa ser possivel desviar de ataques e habilidades
+- no mapa pve deve ser possivel fazer upgrade de nivel de personagem ao matar monstros
